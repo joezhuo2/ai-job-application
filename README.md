@@ -111,7 +111,7 @@ Running the installer again updates the commands and keeps your `me/` folder.
   counts (`skills`, `eligibility`, `evidence`, `logistics`, `interest`). The
   weights do not have to add up to 100. With no arguments, shows them.
 - **`/clear-cache [days]`:** forgets cached postings not seen for that many
-  days, and saves the number (90 by default). `/search` also does this at
+  days, and saves the number (30 by default). `/search` also does this at
   the start of each run.
 - **`/cover-letter [on|off]`:** turns tailored cover letters on or off. Off by
   default. When on, `/apply` writes a one-page letter for any form that has
@@ -165,13 +165,17 @@ The full rubric is in [CLAUDE.md](CLAUDE.md).
 
 The commands run in your Claude Code session, on whichever model it is set
 to, and count against your Claude plan (or API credits, if that is how you
-run Claude Code). They start no subagents. Switch model with `/model` before
-running a command.
+run Claude Code). Switch model with `/model` before running a command. The
+one exception is `/apply`, which splits its work across subagents.
 
 | Command | Recommended model | Why |
 | --- | --- | --- |
-| `/search`, `/score` | Claude Sonnet 5.5 | High volume: each round reads and scores 15 postings. Sonnet costs half of Opus per token and handles the rubric, including traps such as graduation-year limits. |
-| `/tailor`, `/apply`, `/sync-profile` | Claude Opus 5.5 | Low volume, and mistakes cost more: resume wording, form answers and browser steps. |
+| `/search`, `/score`, `/apply` | Claude Sonnet 5.5 | High volume: each round reads and scores 15 postings. Sonnet costs half of Opus per token and handles the rubric, including traps such as graduation-year limits. |
+| `/tailor`, `/sync-profile` | Claude Opus 5.5 | Low volume, and mistakes cost more: resume wording and profile facts. |
+
+`/apply` runs best on Sonnet as the orchestrator. It hands form filling to a
+Haiku subagent and free-text answers and the cover letter to an Opus
+subagent.
 
 Claude Haiku 5.5 is about 20 times cheaper than Sonnet per token and is
 worth trying for `/search` if usage matters more to you than scoring

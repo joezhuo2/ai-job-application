@@ -24,6 +24,23 @@ For each target, working in `me/applications/<company>-<role>/`:
 6. Stop and skip to the next target, noting why, when the form needs a sign-in, a new account or a CAPTCHA. Leave a factual question blank, and list it, when neither file answers it. Never guess an answer about work authorization, demographics, salary or availability.
 7. Do not press the final submit button. Set the row's status to `prepared`.
 
+### Models
+
+This session (usually Sonnet) orchestrates: it picks targets, hands out the work below, checks what comes back, runs the approval and presses submit.
+
+- **Routine work on Haiku.** Form filling (steps 2, 3 and 6) goes to a subagent with `model: "haiku"`, given the form URL, the application folder, the PDF path and these rules. It fills the factual fields only and returns what it filled, what it left blank and why.
+- **Harder work on Opus.** Free-text answers and the cover letter go to a subagent with `model: "opus"`, given the application folder (posting text and profile paths) and the rules in those two sections. It returns the drafts; this session enters them in the form.
+
+If subagents are unavailable, do the steps here.
+
+### Browser work
+
+Keep page reads small, since screenshots and page dumps are large:
+
+- Load every browser tool needed in one ToolSearch call, including `browser_batch`, then send runs of predictable clicks and typing as one batch.
+- Find fields with `find` and fill them with `form_input`. Avoid full `read_page` dumps after the first read of the form.
+- Take a screenshot only to check a result, at `scale: 0.5`.
+
 ### Free-text answers
 
 A free-text question asks for sentences, not a fact: "Why do you want to work here?", "Tell us about a project you are proud of", "What interests you about this role?", "Anything else we should know?".

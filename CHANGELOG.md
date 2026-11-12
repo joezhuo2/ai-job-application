@@ -6,6 +6,18 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-11-12
+
+### Changed
+
+- `/apply` splits its work by model: your session (Sonnet recommended)
+  orchestrates and submits, a Haiku subagent fills the factual form fields,
+  and an Opus subagent writes free-text answers and the cover letter.
+- `/apply` keeps browser reads small: `find` and `form_input` for fields,
+  `browser_batch` for runs of clicks, and half-size screenshots only to
+  check a result.
+- Cached postings are forgotten after 30 days by default, down from 90.
+
 ## [0.1.2] - 2026-11-12
 
 ### Added
@@ -65,6 +77,7 @@ All notable changes to this project are documented here. The format follows
 - A job-feed reader for Greenhouse, Lever and Ashby.
 - An npx and npm installer that creates the project with a blank `me/`.
 
-[Unreleased]: https://github.com/joezhuo2/ai-job-application/compare/v0.1.2...HEAD
+[Unreleased]: https://github.com/joezhuo2/ai-job-application/compare/v0.1.3...HEAD
+[0.1.3]: https://github.com/joezhuo2/ai-job-application/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/joezhuo2/ai-job-application/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/joezhuo2/ai-job-application/releases/tag/v0.1.1
