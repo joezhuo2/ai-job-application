@@ -10,7 +10,7 @@ Targets: $ARGUMENTS
 ## Fill the batch
 
 - **Targets named:** use them, up to the batch size. Say how many were left out.
-- **No targets:** start with the rows in `me/tracker.csv` with status `found` and a score at or above the cutoff, highest score first. If that is fewer than the batch size, run the `/search` steps and add the new postings that score at or above the cutoff. Repeat the search at most three times. If the batch is still short, go on with what there is and say how many were found against how many were wanted; never lower the cutoff to fill it.
+- **No targets:** start with the rows in `me/tracker.csv` with status `found` and a score at or above the cutoff, highest score first. If that is fewer than the batch size, run the `/search` steps once; `/search` keeps going until the batch is full or its own stop conditions end it. If the batch is still short, go on with what there is and say how many were found against how many were wanted; never lower the cutoff to fill it.
 
 ## Prepare (no approval needed)
 
