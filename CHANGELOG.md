@@ -6,6 +6,28 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-11-12
+
+### Added
+
+- `/apply` drafts an answer to each free-text question ("Why this
+  company?") from your profile and the posting, and shows every answer in
+  full for you to check or change before anything is submitted.
+- `/cover-letter [on|off]` turns tailored cover letters on or off. It is off
+  by default. When on, `/apply` writes a one-page letter for forms that have
+  a cover letter field or upload.
+- A cover letter layout, `me/cover-letter.tex`.
+- A Claude Code plugin: `/plugin install ai-job-application --marketplace
+  joezhuo2/ai-job-application`, then `/ai-job-application:setup` creates the
+  project folder.
+- A "Models and cost" section in the README with a recommended model for
+  each command.
+
+### Changed
+
+- Anything `/apply` writes about the role or company must come from the
+  posting text.
+
 ## [0.1.1] - 2026-11-12
 
 ### Added
@@ -43,5 +65,6 @@ All notable changes to this project are documented here. The format follows
 - A job-feed reader for Greenhouse, Lever and Ashby.
 - An npx and npm installer that creates the project with a blank `me/`.
 
-[Unreleased]: https://github.com/joezhuo2/ai-job-application/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/joezhuo2/ai-job-application/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/joezhuo2/ai-job-application/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/joezhuo2/ai-job-application/releases/tag/v0.1.1

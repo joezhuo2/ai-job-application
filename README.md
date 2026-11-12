@@ -99,8 +99,10 @@ Running the installer again updates the commands and keeps your `me/` folder.
   builds a general resume from your experiences.
 - **`/apply [urls]`:** fills a batch. With no arguments it takes queued jobs
   above the cutoff and runs `/search` to fill the rest of the batch. For each job
-  it tailors the resume and fills the form, then shows one list and submits
-  only the numbers you name.
+  it tailors the resume, fills the form, and drafts an answer to each
+  free-text question ("Why this company?") from your profile and the
+  posting. It then shows one list with every drafted answer in full, lets
+  you change any of them, and submits only the numbers you name.
 - **`/batch-size [n]`:** sets how many applications `/apply` handles in one
   run. With no number, shows the current value.
 - **`/score-cutoff [n]`:** sets the minimum score a job needs before `/apply`
@@ -111,6 +113,9 @@ Running the installer again updates the commands and keeps your `me/` folder.
 - **`/clear-cache [days]`:** forgets cached postings not seen for that many
   days, and saves the number (90 by default). `/search` also does this at
   the start of each run.
+- **`/cover-letter [on|off]`:** turns tailored cover letters on or off. Off by
+  default. When on, `/apply` writes a one-page letter for any form that has
+  a cover letter field or upload.
 - **`/linkedin-search [on|off]`:** turns LinkedIn Jobs on or off as a source
   for `/search`. Off by default. With no argument, it flips the setting.
 - **`/outcome <company> <result>`:** records what happened to an application
@@ -199,7 +204,8 @@ Rough, unmeasured token estimates: `/score` 15-20k, `/tailor` 30-50k, one
 | Companies whose job feeds are searched | `me/companies.json` |
 | Every posting scored, with score and status | `me/tracker.csv` |
 | Every posting come across, scored or not | `me/cache.json` |
-| Posting text and tailored resume per application | `me/applications/<company>-<role>/` |
+| Cover letter layout | `me/cover-letter.tex` |
+| Posting text, tailored resume, drafted answers and cover letter per application | `me/applications/<company>-<role>/` |
 | Blank starting copy of the above | `me.example/` |
 
 ## Development

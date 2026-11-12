@@ -15,6 +15,7 @@
 - Score cutoff (percent of total weight, 0-100): 70
 - Batch size (applications per `/apply` run): 5
 - LinkedIn Jobs search: off
+- Cover letter: off
 - Forget seen postings after (days): 90
 
 ## Scoring weights
