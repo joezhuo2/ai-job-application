@@ -11,6 +11,7 @@
     "bin/install.mjs",
     ".claude/commands",
     "tools/fetch-jobs.mjs",
+    "tools/cache.mjs",
     "me.example",
     "CLAUDE.md"
   ],

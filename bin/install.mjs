@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
 const source = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const shipped = ['.claude/commands', 'tools/fetch-jobs.mjs', 'me.example', 'CLAUDE.md', 'README.md'];
+const shipped = ['.claude/commands', 'tools/fetch-jobs.mjs', 'tools/cache.mjs', 'me.example', 'CLAUDE.md', 'README.md'];
 
 export const install = (target) => {
   mkdirSync(target, { recursive: true });
