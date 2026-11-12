@@ -1,0 +1,108 @@
+\documentclass[letterpaper,10pt]{article}
+
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-.6in}
+\addtolength{\textheight}{1.2in}
+
+\urlstyle{same}
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+\titleformat{\section}{\vspace{-6pt}\scshape\raggedright\large}{}{0em}{}[\color{black}\titlerule \vspace{-6pt}]
+
+\newcommand{\resumeItem}[1]{\item\small{{#1 \vspace{-3pt}}}}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-2pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & #2 \\
+      \textit{\small#3} & \textit{\small #4} \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeProjectHeading}[1]{
+    \item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \small#1 & \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}[leftmargin=0.3in]}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+\begin{document}
+
+\begin{center}
+    \textbf{\Huge \scshape Your Name} \ \vspace{1pt}
+    \small City, Region $|$ (000) 000-0000 $|$ \href{mailto:you@example.com}{\underline{you@example.com}} $|$
+    \href{https://linkedin.com/in/your-handle}{\underline{linkedin.com/in/your-handle}} $|$
+    \href{https://github.com/your-handle}{\underline{github.com/your-handle}}
+\end{center}
+
+%%BEGIN skills
+\section{Technical Skills}
+ \begin{itemize}[leftmargin=0.15in, label={}]
+    \small{\item{
+     \textbf{Languages}{: } \
+     \textbf{Frameworks \& Libraries}{: } \
+     \textbf{Developer Tools}{: }
+    }}
+ \end{itemize}
+%%END skills
+
+\section{Education}
+  \resumeSubHeadingListStart
+    \resumeSubheading
+      {School}{City, Region}
+      {Degree}{Start - End}
+  \resumeSubHeadingListEnd
+
+\section{Projects}
+    \resumeSubHeadingListStart
+%%BEGIN project example-project
+      \resumeProjectHeading
+          {\textbf{Project Name} $|$ \emph{Stack} $|$ \emph{one-line summary}}
+          \resumeItemListStart
+            \resumeItem{Result first, then how you did it, with a number where you have one}
+          \resumeItemListEnd
+%%END project
+    \resumeSubHeadingListEnd
+
+\section{Experience}
+  \resumeSubHeadingListStart
+%%BEGIN experience example-employer
+    \resumeSubheading
+      {Employer}{City, Region}
+      {Role}{Start - End}
+      \resumeItemListStart
+        \resumeItem{Result first, then how you did it}
+      \resumeItemListEnd
+%%END experience
+  \resumeSubHeadingListEnd
+
+\end{document}

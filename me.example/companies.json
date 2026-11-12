@@ -1,0 +1,5 @@
+{
+  "greenhouse": ["stripe", "airbnb", "databricks", "cloudflare", "datadog", "figma", "coinbase", "roblox", "anthropic", "lyft", "pinterest", "duolingo"],
+  "lever": ["spotify", "zoox", "weride", "kraken", "whoop", "wealthfront", "nominal"],
+  "ashby": ["ramp", "notion", "openai", "linear", "supabase", "cursor", "vanta", "deel", "zapier", "replit", "sentry", "cohere", "snowflake"]
+}
