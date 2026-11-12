@@ -1,0 +1,14 @@
+{
+  "name": "ai-job-application",
+  "description": "Job-application assistant for Claude Code: find postings, score your fit, tailor a resume and fill the form.",
+  "owner": {
+    "name": "joezhuo2"
+  },
+  "plugins": [
+    {
+      "name": "ai-job-application",
+      "source": "./",
+      "description": "Job-application assistant. Run /ai-job-application:setup to create your project folder."
+    }
+  ]
+}
