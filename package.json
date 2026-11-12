@@ -1,0 +1,29 @@
+{
+  "name": "ai-job-application",
+  "version": "0.1.0",
+  "description": "Claude Code job-application assistant: finds postings, scores your fit, tailors a one-page resume and fills the form. Your data stays local.",
+  "repository": "github:joezhuo2/ai-job-application",
+  "type": "module",
+  "bin": {
+    "ai-job-application": "bin/install.mjs"
+  },
+  "files": [
+    "bin/install.mjs",
+    ".claude/commands",
+    "tools/fetch-jobs.mjs",
+    "me.example",
+    "CLAUDE.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "node --test tools/*.test.mjs bin/*.test.mjs"
+  },
+  "keywords": [
+    "claude",
+    "claude-code",
+    "job-search",
+    "resume"
+  ]
+}
