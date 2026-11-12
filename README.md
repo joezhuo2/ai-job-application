@@ -2,6 +2,7 @@
 
 <p align="center">
   <a href="https://claude.com/claude-code"><img src="https://img.shields.io/badge/built%20for-Claude%20Code-D97757" alt="built for Claude Code"></a>
+  <a href="https://www.npmjs.com/package/ai-job-application"><img src="https://img.shields.io/npm/v/ai-job-application?logo=npm&color=orange" alt="npm version"></a>
   <img src="https://img.shields.io/badge/node-%E2%89%A518-339933?logo=nodedotjs&logoColor=white" alt="node 18 or later">
   <img src="https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey" alt="platform: Windows | macOS | Linux">
   <img src="https://img.shields.io/badge/your%20data-stays%20local-green" alt="your data stays local">
@@ -33,13 +34,13 @@ GitHub CLI (`gh`).
   folder you name.
 
   ```bash
-  npx github:joezhuo2/ai-job-application
+  npx ai-job-application
   ```
 
 - **npm:** installs the `ai-job-application` command, which does the same.
 
   ```bash
-  npm i -g github:joezhuo2/ai-job-application
+  npm i -g ai-job-application
   ```
 
 - **git:** clone the repo and copy the blank profile.
