@@ -1,6 +1,6 @@
 {
   "name": "ai-job-application",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Claude Code job-application assistant: finds postings, scores your fit, tailors a one-page resume and fills the form. Your data stays local.",
   "repository": "github:joezhuo2/ai-job-application",
   "type": "module",
