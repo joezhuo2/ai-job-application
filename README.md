@@ -12,6 +12,7 @@
   <a href="#install">Install</a> •
   <a href="#commands">Commands</a> •
   <a href="#scoring">Scoring</a> •
+  <a href="#models-and-cost">Models</a> •
   <a href="#privacy">Privacy</a> •
   <a href="#files">Files</a> •
   <a href="#development">Development</a> •
@@ -41,6 +42,21 @@ GitHub CLI (`gh`).
 
   ```bash
   npm i -g ai-job-application
+  ```
+
+- **Claude Code plugin:** run these inside Claude Code. The plugin adds one
+  command, which creates the same folder.
+
+  ```
+  /plugin install ai-job-application --marketplace joezhuo2/ai-job-application
+  /ai-job-application:setup
+  ```
+
+  On Claude Code older than 2.1.275, install in two steps:
+
+  ```
+  /plugin marketplace add joezhuo2/ai-job-application
+  /plugin install ai-job-application@ai-job-application
   ```
 
 - **git:** clone the repo and copy the blank profile.
@@ -140,6 +156,27 @@ posting's wording.
 
 The full rubric is in [CLAUDE.md](CLAUDE.md).
 
+## Models and cost
+
+The commands run in your Claude Code session, on whichever model it is set
+to, and count against your Claude plan (or API credits, if that is how you
+run Claude Code). They start no subagents. Switch model with `/model` before
+running a command.
+
+| Command | Recommended model | Why |
+| --- | --- | --- |
+| `/search`, `/score` | Claude Sonnet 5.5 | High volume: each round reads and scores 15 postings. Sonnet costs half of Opus per token and handles the rubric, including traps such as graduation-year limits. |
+| `/tailor`, `/apply`, `/sync-profile` | Claude Opus 5.5 | Low volume, and mistakes cost more: resume wording, form answers and browser steps. |
+
+Claude Haiku 5.5 is about 20 times cheaper than Sonnet per token and is
+worth trying for `/search` if usage matters more to you than scoring
+strictness; it has not been tested here. Claude Fable 5.2 costs twice as
+much as Opus and is not needed for any command.
+
+Rough, unmeasured token estimates: `/score` 15-20k, `/tailor` 30-50k, one
+`/search` round 60-100k (a full five-round run 300-500k), and `/apply`
+50-100k per application.
+
 ## Privacy
 
 - Everything about you lives in `me/`, which git ignores.
@@ -182,6 +219,7 @@ npm test
 | `tools/fetch-jobs.mjs` | Lists postings from Greenhouse, Lever and Ashby feeds |
 | `tools/cache.mjs` | Remembers postings already seen and drops repeats |
 | `bin/install.mjs` | The npx and npm installer |
+| `.claude-plugin/`, `commands/setup.md` | The Claude Code plugin and its setup command |
 
 ## Contributing
 
