@@ -11,8 +11,8 @@
 - Location regex for `tools/fetch-jobs.mjs`: (not set; example: `toronto|waterloo|remote|canada`)
 - Work terms wanted: (not set; example: Summer 2027, 4 months)
 
-## Threshold
-- Apply threshold (0-100): 70
+## Apply settings
+- Score cutoff (0-100): 70
 - Batch size (applications per `/apply` run): 5
 
 ## Deal-breakers

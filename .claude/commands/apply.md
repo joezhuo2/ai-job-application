@@ -1,13 +1,16 @@
 ---
-description: Prepare applications for queued jobs, then submit the ones you approve
-argument-hint: [posting URLs or company names; empty = every job above the threshold]
+description: Find, tailor and fill a batch of applications above your score cutoff, then submit the ones you approve
+argument-hint: [posting URLs or company names; empty = search for a full batch]
 ---
 
 Targets: $ARGUMENTS
 
-With no targets, use the rows in `me/tracker.csv` with status `found` and a score at or above the threshold in `me/preferences.md`, highest score first.
+"Batch size" and "Score cutoff" come from `me/preferences.md`. One run handles at most "Batch size" applications.
 
-Take at most "Batch size" targets (from `me/preferences.md`) in one run, whether they were named or queued. Say how many are left for the next run.
+## Fill the batch
+
+- **Targets named:** use them, up to the batch size. Say how many were left out.
+- **No targets:** start with the rows in `me/tracker.csv` with status `found` and a score at or above the cutoff, highest score first. If that is fewer than the batch size, run the `/search` steps and add the new postings that score at or above the cutoff. Repeat the search at most three times. If the batch is still short, go on with what there is and say how many were found against how many were wanted; never lower the cutoff to fill it.
 
 ## Prepare (no approval needed)
 
@@ -21,7 +24,7 @@ For each target:
 
 ## Approve
 
-Show one numbered list of the prepared applications: company, role, score, round-1 odds, resume link, and anything left blank. Under it, list the skipped ones and what each needs from the user. Then ask which numbers to submit.
+Show one numbered list of the prepared applications: company, role, score, competition tier, round-1 odds, resume link, and anything left blank. Under it, list the skipped ones and what each needs from the user. Then ask which numbers to submit.
 
 When the user answers a missing question, save it under "Form answers" in `me/preferences.md` so it is never asked again.
 
