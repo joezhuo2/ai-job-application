@@ -9,7 +9,7 @@ test('install copies the project, creates me/ once and never overwrites it', () 
   const target = mkdtempSync(path.join(tmpdir(), 'aja-'));
   try {
     assert.equal(install(target).createdProfile, true);
-    for (const f of ['.claude/commands/apply.md', 'tools/fetch-jobs.mjs', 'CLAUDE.md', 'me/preferences.md', 'me.example/resume.tex']) {
+    for (const f of ['.claude/commands/apply.md', 'tools/fetch-jobs.mjs', 'tools/cache.mjs', '.claude/commands/scoring.md', 'CLAUDE.md', 'me/preferences.md', 'me.example/resume.tex']) {
       assert.ok(existsSync(path.join(target, f)), f);
     }
     assert.match(readFileSync(path.join(target, '.gitignore'), 'utf8'), /^\/me\/$/m);

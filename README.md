@@ -73,7 +73,8 @@ Running the installer again updates the commands and keeps your `me/` folder.
   target roles, locations, work terms and deal-breakers.
 - **`/search [keywords]`:** finds new postings from the Greenhouse, Lever and
   Ashby feeds of the companies in `me/companies.json`, plus web search. It
-  scores each one and queues those at or above your score cutoff.
+  scores them in rounds of 15 and keeps going until `batch-size` postings
+  clear your score cutoff, it runs out of postings, or five rounds have run.
 - **`/score <url or job description>`:** scores one posting from 0 to 100 and
   estimates your odds of reaching each interview round.
 - **`/tailor [url or job description]`:** builds a one-page resume for the
@@ -81,13 +82,21 @@ Running the installer again updates the commands and keeps your `me/` folder.
   posting's keywords wherever your profile supports them. With no posting, it
   builds a general resume from your experiences.
 - **`/apply [urls]`:** fills a batch. With no arguments it takes queued jobs
-  above the cutoff and runs `/search` until it has a full batch. For each job
+  above the cutoff and runs `/search` to fill the rest of the batch. For each job
   it tailors the resume and fills the form, then shows one list and submits
   only the numbers you name.
 - **`/batch-size [n]`:** sets how many applications `/apply` handles in one
   run. With no number, shows the current value.
 - **`/score-cutoff [n]`:** sets the minimum score a job needs before `/apply`
   will prepare it. With no number, shows the current value.
+- **`/scoring [dimension] [weight]`:** changes how much a fit-score dimension
+  counts (`skills`, `eligibility`, `evidence`, `logistics`, `interest`). The
+  weights do not have to add up to 100. With no arguments, shows them.
+- **`/clear-cache [days]`:** forgets cached postings not seen for that many
+  days, and saves the number (90 by default). `/search` also does this at
+  the start of each run.
+- **`/linkedin-search [on|off]`:** turns LinkedIn Jobs on or off as a source
+  for `/search`. Off by default. With no argument, it flips the setting.
 - **`/outcome <company> <result>`:** records what happened to an application
   (no reply, rejected, which round you reached, offer). These records are
   what later replace the assumed odds with your own results.
@@ -100,7 +109,7 @@ Rust to my skills"). It edits `me/profile.md` for you.
 The fit score compares you with the people who actually apply, not with the
 posting's wording.
 
-| Dimension | Weight |
+| Dimension | Default weight |
 | --- | --- |
 | Skills match | 35 |
 | Eligibility and level | 25 |
@@ -108,6 +117,13 @@ posting's wording.
 | Logistics | 10 |
 | Interest | 10 |
 
+- **Your weights:** `/scoring` changes any weight. The score is the points
+  earned as a percentage of the total weight, and a job qualifies when it
+  earns at least your score cutoff percent of that total.
+- **No repeats:** every posting `/search` comes across is cached and matched
+  on company, title and location, so the same job under another URL is not
+  scored twice. The same job posted again more than 30 days later under a
+  new URL counts as a new hiring round.
 - **Strict by design:** meeting a requirement earns about half its points,
   a missing minimum requirement caps its dimension at one third, and having
   no prior internship caps eligibility for roles that mention experience.
@@ -132,7 +148,9 @@ The full rubric is in [CLAUDE.md](CLAUDE.md).
 - Nothing is submitted until you name the application in that session.
 - Job postings are treated as untrusted text: instructions inside them are
   ignored and links in them are not followed.
-- `/search` does not scrape LinkedIn Jobs.
+- `/search` does not read LinkedIn Jobs unless you turn it on with
+  `/linkedin-search`. LinkedIn's terms forbid automated browsing, so that
+  carries some risk to your account.
 
 ## Files
 
@@ -142,7 +160,8 @@ The full rubric is in [CLAUDE.md](CLAUDE.md).
 | Targets, score cutoff, batch size, saved form answers | `me/preferences.md` |
 | Master resume | `me/resume.tex` |
 | Companies whose job feeds are searched | `me/companies.json` |
-| Every posting seen, with score and status | `me/tracker.csv` |
+| Every posting scored, with score and status | `me/tracker.csv` |
+| Every posting come across, scored or not | `me/cache.json` |
 | Posting text and tailored resume per application | `me/applications/<company>-<role>/` |
 | Blank starting copy of the above | `me.example/` |
 
@@ -161,6 +180,7 @@ npm test
 | `.claude/commands/` | One Markdown prompt per slash command |
 | `CLAUDE.md` | Rules, the fit-score rubric and the interview-odds method |
 | `tools/fetch-jobs.mjs` | Lists postings from Greenhouse, Lever and Ashby feeds |
+| `tools/cache.mjs` | Remembers postings already seen and drops repeats |
 | `bin/install.mjs` | The npx and npm installer |
 
 ## Contributing

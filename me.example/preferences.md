@@ -12,8 +12,18 @@
 - Work terms wanted: (not set; example: Summer 2027, 4 months)
 
 ## Apply settings
-- Score cutoff (0-100): 70
+- Score cutoff (percent of total weight, 0-100): 70
 - Batch size (applications per `/apply` run): 5
+- LinkedIn Jobs search: off
+- Forget seen postings after (days): 90
+
+## Scoring weights
+Change with `/scoring <dimension> <weight>`. They do not have to add up to 100.
+- skills: 35
+- eligibility: 25
+- evidence: 20
+- logistics: 10
+- interest: 10
 
 ## Deal-breakers
 - (none set)

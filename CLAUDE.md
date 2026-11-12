@@ -15,12 +15,14 @@ A personal job-application assistant that runs inside Claude Code. Everything ab
 | Path | Purpose |
 |---|---|
 | `me/profile.md` | Experience bank: every project, job, award and bullet that could go on a resume, with tags |
-| `me/preferences.md` | Target roles, locations, score cutoff, deal-breakers, profile links, saved form answers |
+| `me/preferences.md` | Target roles, locations, score cutoff, batch size, scoring weights, deal-breakers, profile links, saved form answers |
 | `me/resume.tex` | Master resume; blocks are marked `%%BEGIN ... %%END` |
 | `me/companies.json` | Companies whose job feeds `/search` reads |
 | `me/tracker.csv` | One row per posting seen: `date,company,role,url,source,score,status,furthest_round,resume,notes` |
 | `me/applications/<company>-<role>/` | Posting text, tailored `resume.tex` and `resume.pdf` for one application |
+| `me/cache.json` | Every posting `/search` has come across, so the same job is not scored twice |
 | `tools/fetch-jobs.mjs` | Lists postings from Greenhouse, Lever and Ashby feeds |
+| `tools/cache.mjs` | Reads and updates `me/cache.json`: `filter`, `mark`, `purge`, `stats` |
 
 Tracker `status` is one of `found`, `skipped`, `prepared`, `submitted`, `interviewing`, `rejected`, `offer`, `ghosted`. `furthest_round` is 0 (no reply), 1 (screen or online assessment), 2 (technical interview), 3 (final round), 4 (offer).
 
@@ -34,17 +36,19 @@ Score against the people who actually apply, not against the posting's wording. 
 
 - Meeting a requirement earns about half of that dimension's points. Full points need evidence that would stand out among shortlisted applicants.
 - A missing minimum requirement caps its dimension at one third. A missing preferred qualification costs points too.
-- No prior internship or paid technical job caps "Eligibility and level" at 15 for any role that mentions prior experience.
+- No prior internship or paid technical job caps "Eligibility and level" at 60% of its weight for any role that mentions prior experience.
 - A skill that appears only in the skills list, with no project or job using it, counts as half a match.
 - Never round up, never add points for enthusiasm, and never soften a gap. A score of 85 or more should be rare.
 
-| Dimension | Weight | What earns points |
+| Dimension | Default weight | What earns points |
 |---|---|---|
 | Skills match | 35 | Share of the posting's required and preferred skills that the profile shows in real use |
 | Eligibility and level | 25 | Year of study, graduation date, work term dates and length, work authorization, required experience |
 | Evidence strength | 20 | The best two or three profile entries show the role's core work with measured results |
 | Logistics | 10 | Location, remote policy, start date and pay against `me/preferences.md` |
 | Interest | 10 | Match to the target roles and industries in `me/preferences.md` |
+
+**Weights.** Use the "Scoring weights" in `me/preferences.md` in place of the defaults when they are set; `/scoring` changes them, and they do not have to add up to 100. Award each dimension between 0 and its weight. The score is the points earned as a percentage of the total weight (points ÷ total weight × 100), so it is always 0-100. A posting qualifies when that percentage is at or above the "Score cutoff", which is the same as earning at least cutoff% of the total weight. Store the percentage in `me/tracker.csv` and show both forms in reports, for example "68 of 110 points, 62%".
 
 A deal-breaker from `me/preferences.md`, or a hard requirement the person cannot meet (for example a completed degree or a citizenship they lack), sets the score to 0 with the reason stated.
 
