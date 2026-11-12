@@ -16,7 +16,7 @@
 - Batch size (applications per `/apply` run): 5
 - LinkedIn Jobs search: off
 - Cover letter: off
-- Forget seen postings after (days): 90
+- Forget seen postings after (days): 30
 
 ## Scoring weights
 Change with `/scoring <dimension> <weight>`. They do not have to add up to 100.
