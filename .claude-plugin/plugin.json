@@ -1,6 +1,6 @@
 {
   "name": "ai-job-application",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Job-application assistant for Claude Code. /ai-job-application:setup creates a project folder that finds postings, scores your fit, tailors a one-page resume and fills the form.",
   "author": { "name": "joezhuo2" },
   "repository": "https://github.com/joezhuo2/ai-job-application"
