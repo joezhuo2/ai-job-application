@@ -87,8 +87,11 @@ Running the installer again updates the commands and keeps your `me/` folder.
   questions until every job, project, award and activity is recorded with
   your role, dates, tools and a measured result. It ends by collecting your
   target roles, locations, work terms and deal-breakers.
-- **`/search [keywords]`:** finds new postings from the Greenhouse, Lever and
-  Ashby feeds of the companies in `me/companies.json`, plus web search. It
+- **`/search [keywords]`:** finds new postings from the Greenhouse, Lever,
+  Ashby, Workday, SmartRecruiters and Workable feeds of the companies in
+  `me/companies.json`, plus web search. A Workday entry is the company's
+  careers page URL (`https://<company>.wd<N>.myworkdayjobs.com/<site>`); the
+  others are the company's name on that board. It
   scores them in rounds of 15 and keeps going until `batch-size` postings
   clear your score cutoff, it runs out of postings, or five rounds have run.
 - **`/score <url or job description>`:** scores one posting from 0 to 100 and
@@ -226,7 +229,7 @@ npm test
 | --- | --- |
 | `.claude/commands/` | One Markdown prompt per slash command |
 | `CLAUDE.md` | Rules, the fit-score rubric and the interview-odds method |
-| `tools/fetch-jobs.mjs` | Lists postings from Greenhouse, Lever and Ashby feeds |
+| `tools/fetch-jobs.mjs` | Lists postings from Greenhouse, Lever, Ashby, Workday, SmartRecruiters and Workable feeds |
 | `tools/cache.mjs` | Remembers postings already seen and drops repeats |
 | `bin/install.mjs` | The npx and npm installer |
 | `.claude-plugin/`, `commands/setup.md` | The Claude Code plugin and its setup command |

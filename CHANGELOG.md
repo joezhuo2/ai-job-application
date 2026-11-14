@@ -6,6 +6,12 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- `/search` reads Workday, SmartRecruiters and Workable job feeds as well as
+  Greenhouse, Lever and Ashby. Add companies under `workday` (the careers
+  page URL), `smartrecruiters` and `workable` in `me/companies.json`.
+
 ## [0.1.3] - 2026-11-12
 
 ### Changed

@@ -22,7 +22,7 @@ A personal job-application assistant that runs inside Claude Code. Everything ab
 | `me/cover-letter.tex` | Cover letter layout; `/apply` fills the body when "Cover letter" is on |
 | `me/applications/<company>-<role>/` | Posting text, tailored `resume.tex` and `resume.pdf`, drafted `answers.md`, and `cover-letter.tex` and `.pdf` when one was written |
 | `me/cache.json` | Every posting `/search` has come across, so the same job is not scored twice |
-| `tools/fetch-jobs.mjs` | Lists postings from Greenhouse, Lever and Ashby feeds |
+| `tools/fetch-jobs.mjs` | Lists postings from Greenhouse, Lever, Ashby, Workday, SmartRecruiters and Workable feeds |
 | `tools/cache.mjs` | Reads and updates `me/cache.json`: `filter`, `mark`, `purge`, `stats` |
 
 Tracker `status` is one of `found`, `skipped`, `prepared`, `submitted`, `interviewing`, `rejected`, `offer`, `ghosted`. `furthest_round` is 0 (no reply), 1 (screen or online assessment), 2 (technical interview), 3 (final round), 4 (offer).
