@@ -6,6 +6,14 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.1.4] - 2026-11-14
+
+### Added
+
+- `/search` reads Workday, SmartRecruiters and Workable job feeds as well as
+  Greenhouse, Lever and Ashby. Add companies under `workday` (the careers
+  page URL), `smartrecruiters` and `workable` in `me/companies.json`.
+
 ## [0.1.3] - 2026-11-12
 
 ### Changed
@@ -77,7 +85,8 @@ All notable changes to this project are documented here. The format follows
 - A job-feed reader for Greenhouse, Lever and Ashby.
 - An npx and npm installer that creates the project with a blank `me/`.
 
-[Unreleased]: https://github.com/joezhuo2/ai-job-application/compare/v0.1.3...HEAD
+[Unreleased]: https://github.com/joezhuo2/ai-job-application/compare/v0.1.4...HEAD
+[0.1.4]: https://github.com/joezhuo2/ai-job-application/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/joezhuo2/ai-job-application/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/joezhuo2/ai-job-application/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/joezhuo2/ai-job-application/releases/tag/v0.1.1
