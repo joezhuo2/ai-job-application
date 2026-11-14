@@ -1,5 +1,8 @@
 {
   "greenhouse": ["stripe", "airbnb", "databricks", "cloudflare", "datadog", "figma", "coinbase", "roblox", "anthropic", "lyft", "pinterest", "duolingo"],
   "lever": ["spotify", "zoox", "weride", "kraken", "whoop", "wealthfront", "nominal"],
-  "ashby": ["ramp", "notion", "openai", "linear", "supabase", "cursor", "vanta", "deel", "zapier", "replit", "sentry", "cohere", "snowflake"]
+  "ashby": ["ramp", "notion", "openai", "linear", "supabase", "cursor", "vanta", "deel", "zapier", "replit", "sentry", "cohere", "snowflake"],
+  "workday": ["https://salesforce.wd12.myworkdayjobs.com/External_Career_Site", "https://rbc.wd3.myworkdayjobs.com/RBCGLOBAL1"],
+  "smartrecruiters": ["ServiceNow", "Ubisoft2"],
+  "workable": ["huggingface"]
 }

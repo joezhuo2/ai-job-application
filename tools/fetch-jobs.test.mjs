@@ -1,6 +1,68 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { normalizeGreenhouse, normalizeLever, normalizeAshby, filterJobs } from './fetch-jobs.mjs';
+import {
+  normalizeGreenhouse,
+  normalizeLever,
+  normalizeAshby,
+  normalizeSmartRecruiters,
+  normalizeWorkable,
+  normalizeWorkday,
+  parseWorkday,
+  paged,
+  filterJobs,
+} from './fetch-jobs.mjs';
+
+test('smartrecruiters', () => {
+  const out = normalizeSmartRecruiters('Acme', {
+    content: [
+      { id: '744', name: 'Software Intern', releasedDate: '2026-03-04T05:06:07.000Z', location: { city: 'Toronto', region: 'ON', country: 'ca', fullLocation: 'Toronto, ON, Canada' } },
+      { id: '745', name: 'Bare', location: { city: 'Paris', country: 'fr' } },
+    ],
+  });
+  assert.deepEqual(out[0], { source: 'smartrecruiters', company: 'Acme', title: 'Software Intern', location: 'Toronto, ON, Canada', url: 'https://jobs.smartrecruiters.com/Acme/744', posted: '2026-03-04T05:06:07.000Z' });
+  assert.equal(out[1].location, 'Paris, fr');
+  assert.equal(out[1].posted, null);
+});
+
+test('workable', () => {
+  const out = normalizeWorkable('acme', {
+    jobs: [{ title: 'ML Intern', url: 'https://apply.workable.com/j/AB12', city: 'Paris', state: '', country: 'France', published_on: '2026-05-29' }],
+  });
+  assert.deepEqual(out, [
+    { source: 'workable', company: 'acme', title: 'ML Intern', location: 'Paris, France', url: 'https://apply.workable.com/j/AB12', posted: '2026-05-29T00:00:00.000Z' },
+  ]);
+});
+
+test('workday', () => {
+  const site = parseWorkday('https://acme.wd5.myworkdayjobs.com/en-US/AcmeCareers?q=intern');
+  assert.deepEqual(site, { company: 'acme', base: 'https://acme.wd5.myworkdayjobs.com/AcmeCareers', api: 'https://acme.wd5.myworkdayjobs.com/wday/cxs/acme/AcmeCareers/jobs' });
+  assert.throws(() => parseWorkday('https://example.com/AcmeCareers'));
+  assert.throws(() => parseWorkday('https://acme.wd5.myworkdayjobs.com/'));
+  const out = normalizeWorkday(site, {
+    jobPostings: [
+      { title: 'A', externalPath: '/job/Toronto/A_R1', locationsText: 'Toronto', postedOn: 'Posted Today' },
+      { title: 'B', externalPath: '/job/X/B_R2', locationsText: '3 Locations', postedOn: 'Posted Yesterday' },
+      { title: 'C', externalPath: '/job/X/C_R3', locationsText: 'Remote', postedOn: 'Posted 5 Days Ago' },
+      { title: 'D', externalPath: '/job/X/D_R4', locationsText: 'Remote', postedOn: 'Posted 30+ Days Ago' },
+    ],
+  }, new Date('2026-11-14T10:00:00Z'));
+  assert.deepEqual(out[0], { source: 'workday', company: 'acme', title: 'A', location: 'Toronto', url: 'https://acme.wd5.myworkdayjobs.com/AcmeCareers/job/Toronto/A_R1', posted: '2026-11-14T00:00:00.000Z' });
+  assert.equal(out[1].location, '');
+  assert.equal(out[1].posted, '2026-11-13T00:00:00.000Z');
+  assert.equal(out[2].posted, '2026-11-09T00:00:00.000Z');
+  assert.equal(out[3].posted, null);
+});
+
+test('paged', async () => {
+  const calls = [];
+  const out = await paged('x', 2, async (offset) => {
+    calls.push(offset);
+    return { total: offset === 0 ? 5 : 0, items: [1, 2, 3, 4, 5].slice(offset, offset + 2) };
+  });
+  assert.deepEqual(out, [1, 2, 3, 4, 5]);
+  assert.deepEqual(calls, [0, 2, 4]);
+  assert.deepEqual(await paged('x', 2, async () => ({ total: 0, items: [] })), []);
+});
 
 test('greenhouse', () => {
   const out = normalizeGreenhouse('acme', {
