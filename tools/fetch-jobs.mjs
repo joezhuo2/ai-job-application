@@ -84,7 +84,122 @@ export const normalizeWorkday = ({ company, base }, data, now = new Date()) =>
     posted: workdayPosted(j.postedOn, now),
   }));
 
-export const filterJobs =(jobs, { title, location } = {}) => {
+export const normalizeRecruitee = (company, data) =>
+  (data.offers ?? []).map((j) => ({
+    source: 'recruitee',
+    company,
+    title: j.title ?? '',
+    location: j.location ?? [j.city, j.country].filter(Boolean).join(', '),
+    url: j.careers_url ?? '',
+    posted: iso(j.published_at?.replace(' UTC', 'Z').replace(' ', 'T')),
+  }));
+
+export const normalizeBambooHr = (company, data) =>
+  (data.result ?? []).map((j) => ({
+    source: 'bamboohr',
+    company,
+    title: j.jobOpeningName ?? '',
+    location: [j.location?.city, j.location?.state].filter(Boolean).join(', ') || (j.isRemote ? 'Remote' : ''),
+    url: `https://${company}.bamboohr.com/careers/${j.id}`,
+    posted: null,
+  }));
+
+export const parseOracle = (entry) => {
+  const u = new URL(entry);
+  const site = /\/sites\/([^/?#]+)/.exec(u.pathname)?.[1];
+  if (!u.hostname.endsWith('.oraclecloud.com') || !site) throw new Error('not an Oracle careers URL (https://<host>.oraclecloud.com/hcmUI/CandidateExperience/en/sites/<site>)');
+  return { company: u.hostname.split('.')[0], origin: u.origin, site };
+};
+
+export const normalizeOracle = ({ company, origin, site }, data) =>
+  (data.items?.[0]?.requisitionList ?? []).map((j) => ({
+    source: 'oracle',
+    company,
+    title: j.Title ?? '',
+    location: j.PrimaryLocation ?? '',
+    url: `${origin}/hcmUI/CandidateExperience/en/sites/${site}/job/${j.Id}`,
+    posted: iso(j.PostedDate),
+  }));
+
+export const parseEightfold = (entry) => {
+  const u = new URL(entry);
+  const domain = u.searchParams.get('domain');
+  if (!domain) throw new Error('careers URL needs ?domain=<company domain>');
+  return { company: domain.split('.')[0], origin: u.origin, domain };
+};
+
+export const normalizeEightfold = ({ company, origin }, data) =>
+  (data.positions ?? []).map((j) => ({
+    source: 'eightfold',
+    company,
+    title: j.name ?? '',
+    location: j.location ?? (j.locations ?? []).join('; '),
+    url: j.canonicalPositionUrl ?? `${origin}/careers/job/${j.id}`,
+    posted: j.t_create ? new Date(j.t_create * 1000).toISOString() : null,
+  }));
+
+export const parseIcims = (entry) => {
+  const u = new URL(/^https?:/.test(entry) ? entry : `https://${entry}`);
+  if (!u.hostname.endsWith('.icims.com')) throw new Error('not an icims.com careers host (careers-<company>.icims.com)');
+  return { company: u.hostname.split('.')[0].replace(/^careers-/, ''), origin: u.origin };
+};
+
+const decode = (t) =>
+  t.replace(/<!\[CDATA\[|\]\]>/g, '').replace(/<[^>]*>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#0?39;/g, "'").replace(/\s+/g, ' ').trim();
+
+export const normalizeIcims = ({ company }, html) =>
+  html
+    .split('iCIMS_JobCardItem')
+    .slice(1)
+    .map((card) => {
+      const url = /href="([^"]*\/jobs\/\d+\/[^"]*)"/.exec(card)?.[1] ?? '';
+      const d = /title="(\d+)\/(\d+)\/(\d+)/.exec(card);
+      return {
+        source: 'icims',
+        company,
+        title: decode(/<h3[^>]*>([\s\S]*?)<\/h3>/.exec(card)?.[1] ?? ''),
+        location: decode(/Location<\/span>\s*<span[^>]*>([\s\S]*?)<\/span>/.exec(card)?.[1] ?? ''),
+        url: url.replace(/\?in_iframe=1$/, ''),
+        posted: d ? iso(`${d[3]}-${d[1].padStart(2, '0')}-${d[2].padStart(2, '0')}`) : null,
+      };
+    })
+    .filter((j) => j.url);
+
+export const normalizeJobBank = (atom) =>
+  atom
+    .split('<entry>')
+    .slice(1)
+    .map((e) => {
+      const field = (name) => decode(new RegExp(`<strong>${name}:</strong>([^<]*)`).exec(e)?.[1] ?? '');
+      return {
+        source: 'jobbank',
+        company: field('Employer'),
+        title: decode(/<title[^>]*>([\s\S]*?)<\/title>/.exec(e)?.[1] ?? ''),
+        location: field('Location'),
+        url: /<link[^>]*href="([^"]*)"/.exec(e)?.[1] ?? '',
+        posted: iso(/<updated>([^<]*)</.exec(e)?.[1]),
+      };
+    });
+
+export const parseGithubList = (entry) => {
+  const m = /^([\w.-]+\/[\w.-]+)(?:@([\w./-]+))?$/.exec(entry);
+  if (!m) throw new Error('expected owner/repo or owner/repo@branch');
+  return `https://raw.githubusercontent.com/${m[1]}/${m[2] ?? 'dev'}/.github/scripts/listings.json`;
+};
+
+export const normalizeGithubList = (data) =>
+  (Array.isArray(data) ? data : [])
+    .filter((j) => j.active && j.is_visible !== false)
+    .map((j) => ({
+      source: 'github',
+      company: j.company_name ?? '',
+      title: j.title ?? '',
+      location: (j.locations ?? []).join('; '),
+      url: j.url ?? '',
+      posted: j.date_posted ? new Date(j.date_posted * 1000).toISOString() : null,
+    }));
+
+export const filterJobs = (jobs, { title, location } = {}) => {
   const t = title ? new RegExp(title, 'i') : null;
   const l = location ? new RegExp(location, 'i') : null;
   return jobs.filter(
@@ -92,14 +207,18 @@ export const filterJobs =(jobs, { title, location } = {}) => {
   );
 };
 
-const getJson = async (url, body) => {
+const get = async (url, body, accept = 'application/json') => {
   const res = await fetch(url, {
     signal: AbortSignal.timeout(30000),
+    headers: { 'user-agent': 'Mozilla/5.0', accept },
     ...(body && { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) }),
   });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  return res.json();
+  return res;
 };
+
+const getJson = async (url, body) => (await get(url, body)).json();
+const getText = async (url) => (await get(url, undefined, '*/*')).text();
 
 // shortcut: stops at MAX_POSTINGS per company and says so on stderr, raise it if a company you want is cut off
 const MAX_POSTINGS = 3000;
@@ -129,6 +248,42 @@ const providers = {
       const data = await getJson(`https://api.smartrecruiters.com/v1/companies/${encodeURIComponent(name)}/postings?limit=100&offset=${offset}`);
       return { total: data.totalFound, items: normalizeSmartRecruiters(name, data) };
     }),
+  recruitee: async (name) => normalizeRecruitee(name, await getJson(`https://${encodeURIComponent(name)}.recruitee.com/api/offers/`)),
+  bamboohr: async (name) => normalizeBambooHr(name, await getJson(`https://${encodeURIComponent(name)}.bamboohr.com/careers/list`)),
+  oracle: async (entry) => {
+    const site = parseOracle(entry);
+    const jobs = [];
+    let total = Infinity;
+    for (let offset = 0; offset < Math.min(total, MAX_POSTINGS); offset += 25) {
+      const data = await getJson(`${site.origin}/hcmRestApi/resources/latest/recruitingCEJobRequisitions?onlyData=true&expand=requisitionList.secondaryLocations&finder=findReqs;siteNumber=${site.site},limit=25,offset=${offset}`);
+      total = data.items?.[0]?.TotalJobsCount ?? 0;
+      jobs.push(...normalizeOracle(site, data));
+    }
+    return jobs;
+  },
+  eightfold: async (entry) => {
+    const site = parseEightfold(entry);
+    return paged(`eightfold/${site.company}`, 10, async (offset) => {
+      const data = await getJson(`${site.origin}/api/apply/v2/jobs?domain=${encodeURIComponent(site.domain)}&start=${offset}&num=10`);
+      return { total: data.count, items: normalizeEightfold(site, data) };
+    });
+  },
+  icims: async (entry) => {
+    const site = parseIcims(entry);
+    const jobs = [];
+    for (let page = 0; jobs.length < MAX_POSTINGS; page++) {
+      const items = normalizeIcims(site, await getText(`${site.origin}/jobs/search?ss=1&in_iframe=1&pr=${page}`));
+      if (!items.length) break;
+      jobs.push(...items);
+    }
+    return jobs;
+  },
+  jobbank: async (entry) => {
+    const [search, location] = entry.split('|').map((p) => p.trim());
+    const q = new URLSearchParams({ searchstring: search, ...(location && { locationstring: location }) });
+    return normalizeJobBank(await getText(`https://www.jobbank.gc.ca/jobsearch/feed/jobSearchRSSfeed?${q}`));
+  },
+  github: async (entry) => normalizeGithubList(await getJson(parseGithubList(entry))),
   workday: async (entry) => {
     const site = parseWorkday(entry);
     return paged(`workday/${site.company}`, 20, async (offset) => {
