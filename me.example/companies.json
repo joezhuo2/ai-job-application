@@ -4,5 +4,12 @@
   "ashby": ["ramp", "notion", "openai", "linear", "supabase", "cursor", "vanta", "deel", "zapier", "replit", "sentry", "cohere", "snowflake"],
   "workday": ["https://salesforce.wd12.myworkdayjobs.com/External_Career_Site", "https://rbc.wd3.myworkdayjobs.com/RBCGLOBAL1"],
   "smartrecruiters": ["ServiceNow", "Ubisoft2"],
-  "workable": ["huggingface"]
+  "workable": ["huggingface"],
+  "recruitee": ["bunq"],
+  "bamboohr": [],
+  "icims": ["careers-kinaxis.icims.com"],
+  "oracle": ["https://eeho.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_45001"],
+  "eightfold": [],
+  "jobbank": ["software intern | Toronto"],
+  "github": ["SimplifyJobs/Summer2027-Internships"]
 }

@@ -87,12 +87,19 @@ Running the installer again updates the commands and keeps your `me/` folder.
   questions until every job, project, award and activity is recorded with
   your role, dates, tools and a measured result. It ends by collecting your
   target roles, locations, work terms and deal-breakers.
-- **`/search [keywords]`:** finds new postings from the Greenhouse, Lever,
-  Ashby, Workday, SmartRecruiters and Workable feeds of the companies in
-  `me/companies.json`, plus web search. A Workday entry is the company's
-  careers page URL (`https://<company>.wd<N>.myworkdayjobs.com/<site>`); the
-  others are the company's name on that board. It
-  scores them in rounds of 15 and keeps going until `batch-size` postings
+- **`/search [keywords]`:** finds new postings from the job feeds listed in
+  `me/companies.json`, plus web search. Greenhouse, Lever, Ashby,
+  SmartRecruiters, Workable, Recruitee and BambooHR entries are the company's
+  name on that board. The others take a URL or a search: Workday
+  (`https://<company>.wd<N>.myworkdayjobs.com/<site>`), Oracle Recruiting
+  Cloud (`https://<host>.oraclecloud.com/hcmUI/CandidateExperience/en/sites/<site>`),
+  iCIMS (`careers-<company>.icims.com`), Eightfold
+  (`https://<careers host>/?domain=<company domain>`; some tenants refuse
+  it), Job Bank (`"keywords | place"`, Canada's federal job board) and GitHub
+  internship lists (`owner/repo`, such as `SimplifyJobs/Summer2027-Internships`).
+  WaterlooWorks needs a login, and Talent Egg, Jobboom, Built In, Wellfound,
+  Work at a Startup and Hitmarker have no public feed, so they are not read.
+  It scores them in rounds of 15 and keeps going until `batch-size` postings
   clear your score cutoff, it runs out of postings, or five rounds have run.
 - **`/score <url or job description>`:** scores one posting from 0 to 100 and
   estimates your odds of reaching each interview round.
@@ -229,7 +236,7 @@ npm test
 | --- | --- |
 | `.claude/commands/` | One Markdown prompt per slash command |
 | `CLAUDE.md` | Rules, the fit-score rubric and the interview-odds method |
-| `tools/fetch-jobs.mjs` | Lists postings from Greenhouse, Lever, Ashby, Workday, SmartRecruiters and Workable feeds |
+| `tools/fetch-jobs.mjs` | Lists postings from ATS feeds, Job Bank and GitHub internship lists |
 | `tools/cache.mjs` | Remembers postings already seen and drops repeats |
 | `bin/install.mjs` | The npx and npm installer |
 | `.claude-plugin/`, `commands/setup.md` | The Claude Code plugin and its setup command |

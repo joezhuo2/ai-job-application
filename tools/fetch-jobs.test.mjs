@@ -7,6 +7,17 @@ import {
   normalizeSmartRecruiters,
   normalizeWorkable,
   normalizeWorkday,
+  normalizeRecruitee,
+  normalizeBambooHr,
+  normalizeOracle,
+  normalizeEightfold,
+  normalizeIcims,
+  normalizeJobBank,
+  normalizeGithubList,
+  parseOracle,
+  parseEightfold,
+  parseIcims,
+  parseGithubList,
   parseWorkday,
   paged,
   filterJobs,
@@ -105,4 +116,64 @@ test('filterJobs', () => {
   assert.deepEqual(filterJobs(jobs, { title: 'intern|co-?op' }).map((j) => j.title), ['SWE Intern', 'Co-op Engineer', 'Coop Student']);
   assert.deepEqual(filterJobs(jobs, { location: 'new york' }).map((j) => j.title), ['SWE Intern', 'Co-op Engineer', 'Staff Engineer']);
   assert.deepEqual(filterJobs(jobs, { title: 'co-?op', location: 'berlin' }).map((j) => j.title), ['Co-op Engineer', 'Coop Student']);
+});
+
+test('recruitee and bamboohr', () => {
+  assert.deepEqual(normalizeRecruitee('bunq', { offers: [{ title: 'Dev', location: 'London, UK', careers_url: 'https://c/o/dev', published_at: '2026-11-16 14:19:38 UTC' }] }), [
+    { source: 'recruitee', company: 'bunq', title: 'Dev', location: 'London, UK', url: 'https://c/o/dev', posted: '2026-11-16T14:19:38.000Z' },
+  ]);
+  const out = normalizeBambooHr('acme', { result: [{ id: '7', jobOpeningName: 'QA', location: { city: 'Ottawa', state: 'ON' } }, { id: '8', jobOpeningName: 'Ops', location: {}, isRemote: true }] });
+  assert.deepEqual(out[0], { source: 'bamboohr', company: 'acme', title: 'QA', location: 'Ottawa, ON', url: 'https://acme.bamboohr.com/careers/7', posted: null });
+  assert.equal(out[1].location, 'Remote');
+});
+
+test('oracle', () => {
+  const site = parseOracle('https://eeho.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1?lang=en');
+  assert.deepEqual(site, { company: 'eeho', origin: 'https://eeho.fa.us2.oraclecloud.com', site: 'CX_1' });
+  assert.throws(() => parseOracle('https://example.com/hcmUI/CandidateExperience/en/sites/CX_1'));
+  assert.throws(() => parseOracle('https://eeho.fa.us2.oraclecloud.com/'));
+  assert.deepEqual(normalizeOracle(site, { items: [{ requisitionList: [{ Id: '9', Title: 'Intern', PrimaryLocation: 'Austin', PostedDate: '2026-11-16' }] }] }), [
+    { source: 'oracle', company: 'eeho', title: 'Intern', location: 'Austin', url: 'https://eeho.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/job/9', posted: '2026-11-16T00:00:00.000Z' },
+  ]);
+});
+
+test('eightfold', () => {
+  const site = parseEightfold('https://careers.qualcomm.com/?domain=qualcomm.com');
+  assert.deepEqual(site, { company: 'qualcomm', origin: 'https://careers.qualcomm.com', domain: 'qualcomm.com' });
+  assert.throws(() => parseEightfold('https://careers.qualcomm.com/'));
+  const out = normalizeEightfold(site, { positions: [{ id: 5, name: 'Intern', location: 'San Diego', t_create: 1767323045, canonicalPositionUrl: 'https://careers.qualcomm.com/careers/job/5' }] });
+  assert.deepEqual(out, [{ source: 'eightfold', company: 'qualcomm', title: 'Intern', location: 'San Diego', url: 'https://careers.qualcomm.com/careers/job/5', posted: '2026-01-02T03:04:05.000Z' }]);
+});
+
+test('icims', () => {
+  assert.deepEqual(parseIcims('careers-kinaxis.icims.com'), { company: 'kinaxis', origin: 'https://careers-kinaxis.icims.com' });
+  assert.throws(() => parseIcims('example.com'));
+  const html = `<ul><li class="iCIMS_JobCardItem"><span class="sr-only field-label">Location</span>
+<span >
+CA-ON-Ottawa</span><a href="https://careers-kinaxis.icims.com/jobs/1/dev-%26-ops/job?in_iframe=1"><h3 >
+Dev &amp; Ops</h3></a><span title="11/16/2026 7:53 AM">1 day ago</span></li></ul>`;
+  assert.deepEqual(normalizeIcims({ company: 'kinaxis' }, html), [
+    { source: 'icims', company: 'kinaxis', title: 'Dev & Ops', location: 'CA-ON-Ottawa', url: 'https://careers-kinaxis.icims.com/jobs/1/dev-%26-ops/job', posted: '2026-11-16T00:00:00.000Z' },
+  ]);
+  assert.deepEqual(normalizeIcims({ company: 'k' }, '<html></html>'), []);
+});
+
+test('jobbank', () => {
+  const atom = `<feed><entry><title type="html"><![CDATA[software intern]]></title><link rel="alternate" href="https://www.jobbank.gc.ca/jobsearch/jobposting/1"/><updated>2026-11-16T21:00:00Z</updated><summary type="html"><![CDATA[<strong>Location:</strong> Toronto (ON)  <br /><strong>Employer:</strong> Acme &amp; Co<br />]]></summary></entry></feed>`;
+  assert.deepEqual(normalizeJobBank(atom), [
+    { source: 'jobbank', company: 'Acme & Co', title: 'software intern', location: 'Toronto (ON)', url: 'https://www.jobbank.gc.ca/jobsearch/jobposting/1', posted: '2026-11-16T21:00:00.000Z' },
+  ]);
+  assert.deepEqual(normalizeJobBank('<feed></feed>'), []);
+});
+
+test('github list', () => {
+  assert.equal(parseGithubList('SimplifyJobs/Summer2027-Internships'), 'https://raw.githubusercontent.com/SimplifyJobs/Summer2027-Internships/dev/.github/scripts/listings.json');
+  assert.equal(parseGithubList('a/b@main'), 'https://raw.githubusercontent.com/a/b/main/.github/scripts/listings.json');
+  assert.throws(() => parseGithubList('not a repo'));
+  const out = normalizeGithubList([
+    { active: true, company_name: 'Acme', title: 'Intern', locations: ['A', 'B'], url: 'https://x/1', date_posted: 1767323045 },
+    { active: false, company_name: 'Old', title: 'Gone', url: 'https://x/2' },
+    { active: true, is_visible: false, company_name: 'Hidden', title: 'H', url: 'https://x/3' },
+  ]);
+  assert.deepEqual(out, [{ source: 'github', company: 'Acme', title: 'Intern', location: 'A; B', url: 'https://x/1', posted: '2026-01-02T03:04:05.000Z' }]);
 });
